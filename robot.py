@@ -29,14 +29,14 @@ class MyRobot(wpilib.TimedRobot):
         self.swerve.updateOdometry()
 
     def teleopPeriodic(self) -> None:
-        self.driveWithJoystick(True)
+        self.driveWithJoystick(False)
 
     def driveWithJoystick(self, fieldRelative: bool) -> None:
         # Get the x speed. We are inverting this because Xbox controllers return
         # negative values when we push forward.
         xSpeed = (
             -self.xspeedLimiter.calculate(
-                wpimath.applyDeadband(self.controller.getLeftY(), 0.02)
+                wpimath.applyDeadband(self.controller.getRawAxis(1), 0.04)
             )
             * drivetrain.kMaxSpeed
         )
@@ -46,7 +46,7 @@ class MyRobot(wpilib.TimedRobot):
         # return positive values when you pull to the right by default.
         ySpeed = (
             -self.yspeedLimiter.calculate(
-                wpimath.applyDeadband(self.controller.getLeftX(), 0.02)
+                wpimath.applyDeadband(self.controller.getRawAxis(0), 0.04)
             )
             * drivetrain.kMaxSpeed
         )
@@ -57,7 +57,7 @@ class MyRobot(wpilib.TimedRobot):
         # the right by default.
         rot = (
             -self.rotLimiter.calculate(
-                wpimath.applyDeadband(self.controller.getRightX(), 0.02)
+                wpimath.applyDeadband(self.controller.getRawAxis(4), 0.04)
             )
             * drivetrain.kMaxSpeed
         )

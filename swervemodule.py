@@ -52,18 +52,17 @@ class SwerveModule:
         drivePosition = self.driveMotor.getEncoder().getPosition()
         self.driveDistance = (drivePosition / gearRatio) * wheelCircumference
 
-        self.driveMotor.getEncoder().setPositionConversionFactor(wheelCircumference / gearRatio)
+        self.encoder = encoder
 
-
-        self.turningEncoder = CANCoder(encoder)
+        self.turningEncoder = CANCoder(self.encoder)
         self.angleRadians = math.radians(self.turningEncoder.getAbsolutePosition())
 
         # Gains are for example purposes only - must be determined for your own robot!
-        self.drivePIDController = wpimath.controller.PIDController(1, 0, 0)
+        self.drivePIDController = wpimath.controller.PIDController(0, 0, 0)
 
         # Gains are for example purposes only - must be determined for your own robot!
         self.turningPIDController = wpimath.controller.ProfiledPIDController(
-            1,
+            0,
             0,
             0,
             wpimath.trajectory.TrapezoidProfile.Constraints(
@@ -79,6 +78,21 @@ class SwerveModule:
         # Limit the PID Controller's input range between -pi and pi and set the input
         # to be continuous.
         self.turningPIDController.enableContinuousInput(-math.pi, math.pi)
+
+
+    def update(self) -> None:
+        """Updates the internal module state from sensors."""
+        self.driveEncoder = self.driveMotor.getEncoder()
+
+        driveEncoderRPM = self.driveEncoder.getVelocity()
+        driveRPM = driveEncoderRPM / gearRatio
+        self.driveMPS = (driveRPM * wheelCircumference) / 60
+
+        drivePosition = self.driveMotor.getEncoder().getPosition()
+        self.driveDistance = (drivePosition / gearRatio) * wheelCircumference
+
+        self.turningEncoder = CANCoder(self.encoder)
+        self.angleRadians = math.radians(self.turningEncoder.getAbsolutePosition())
 
     def getState(self) -> wpimath.kinematics.SwerveModuleState:
         """Returns the current state of the module.
