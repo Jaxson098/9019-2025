@@ -119,7 +119,7 @@ class Drivetrain:
         self.table.putNumber("backLeft angleRadians", self.backLeft.angleRadians)
         self.table.putNumber("backLeft driveMPS", self.backLeft.driveMPS)
         self.table.putNumber("backLeft driveDistance", self.backLeft.driveDistance)
-        # self.table.putNumber("gyro.getRotation2d", self.gyro.getRotation2d())
+        self.table.putNumber("gyro.getRotation2d.degrees()", self.gyro.getRotation2d().degrees())
 
     def updateOdometry(self) -> None:
         """Updates the field relative position of the robot."""
