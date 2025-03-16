@@ -43,8 +43,6 @@ class SwerveModule:
         self.driveMotor = SparkMax(driveMotorID, SparkMax.MotorType.kBrushless)
         self.turningMotor = SparkMax(turningMotorID, SparkMax.MotorType.kBrushless)
 
-        self.driveEncoder = self.driveMotor.getEncoder()
-
         # driveEncoderRPM = self.driveEncoder.getVelocity()
         # driveRPM = driveEncoderRPM / gearRatio
         # self.driveMPS = (driveRPM * wheelCircumference) / 60
