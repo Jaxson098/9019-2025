@@ -27,10 +27,10 @@ class Drivetrain:
         self.backLeftLocation = wpimath.geometry.Translation2d(-0.23495,0.234951)
         self.backRightLocation = wpimath.geometry.Translation2d(-0.23495, -0.23495)
 
-        self.frontLeft = swervemodule.SwerveModule(5, 6, 13)
-        self.frontRight = swervemodule.SwerveModule(7, 8, 10)
-        self.backRight = swervemodule.SwerveModule(4, 2, 12)
-        self.backLeft = swervemodule.SwerveModule(3, 11, 9)
+        self.frontLeft = swervemodule.SwerveModule(5, 6, 13, True)
+        self.frontRight = swervemodule.SwerveModule(7, 8, 10, True)
+        self.backRight = swervemodule.SwerveModule(4, 2, 12, False)
+        self.backLeft = swervemodule.SwerveModule(3, 11, 9, False)
 
         self.gyro = AHRS.create_spi()
 
@@ -42,6 +42,11 @@ class Drivetrain:
             self.backLeftLocation,
             self.backRightLocation,
         )
+
+        self.frontLeft.update()
+        self.frontRight.update()
+        self.backLeft.update()
+        self.backRight.update()
 
         self.odometry = wpimath.kinematics.SwerveDrive4Odometry(
             self.kinematics,
@@ -103,6 +108,11 @@ class Drivetrain:
         self.table.putNumber("xSpeed", xSpeed)
         self.table.putNumber("ySpeed", ySpeed)
         self.table.putNumber("rot", rot)
+
+        self.table.putNumber("frontLeft desired angle:", math.degrees(swerveModuleStates[0].angle.radians()))
+        self.table.putNumber("frontRight desired angle:", math.degrees(swerveModuleStates[1].angle.radians()))
+        self.table.putNumber("backLeft desired angle:", math.degrees(swerveModuleStates[2].angle.radians()))
+        self.table.putNumber("backRight desired angle:", math.degrees(swerveModuleStates[3].angle.radians()))
     
         self.table.putNumber("frontLeft angleRadians", self.frontLeft.angleRadians)
         self.table.putNumber("frontLeft driveMPS", self.frontLeft.driveMPS)

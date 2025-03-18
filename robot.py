@@ -36,7 +36,7 @@ class MyRobot(wpilib.TimedRobot):
         # negative values when we push forward.
         xSpeed = (
             -self.xspeedLimiter.calculate(
-                wpimath.applyDeadband(self.controller.getRawAxis(1), 0.04)
+                wpimath.applyDeadband(self.controller.getRawAxis(1), 0.08)
             )
             * drivetrain.kMaxSpeed
         )
@@ -46,7 +46,7 @@ class MyRobot(wpilib.TimedRobot):
         # return positive values when you pull to the right by default.
         ySpeed = (
             -self.yspeedLimiter.calculate(
-                wpimath.applyDeadband(self.controller.getRawAxis(0), 0.04)
+                wpimath.applyDeadband(self.controller.getRawAxis(0), 0.08)
             )
             * drivetrain.kMaxSpeed
         )
@@ -57,7 +57,7 @@ class MyRobot(wpilib.TimedRobot):
         # the right by default.
         rot = (
             -self.rotLimiter.calculate(
-                wpimath.applyDeadband(self.controller.getRawAxis(4), 0.04)
+                wpimath.applyDeadband(self.controller.getRawAxis(4), 0.08)
             )
             * drivetrain.kMaxSpeed
         )

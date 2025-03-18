@@ -28,7 +28,8 @@ class SwerveModule:
         self,
         driveMotorID: int,
         turningMotorID: int,
-        encoder: int
+        encoder: int,
+        inverted: bool
     ) -> None:
         """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
 
@@ -42,6 +43,10 @@ class SwerveModule:
 
         self.driveMotor = SparkMax(driveMotorID, SparkMax.MotorType.kBrushless)
         self.turningMotor = SparkMax(turningMotorID, SparkMax.MotorType.kBrushless)
+
+        self.driveMotor.setInverted(inverted)
+
+        self.driveEncoder = self.driveMotor.getEncoder()
 
         # driveEncoderRPM = self.driveEncoder.getVelocity()
         # driveRPM = driveEncoderRPM / gearRatio
@@ -63,7 +68,7 @@ class SwerveModule:
 
         # Gains are for example purposes only - must be determined for your own robot!
         self.turningPIDController = wpimath.controller.ProfiledPIDController(
-            0,
+            0.2,
             0,
             0,
             wpimath.trajectory.TrapezoidProfile.Constraints(
@@ -78,8 +83,7 @@ class SwerveModule:
 
         # Limit the PID Controller's input range between -pi and pi and set the input
         # to be continuous.
-        self.turningPIDController.enableContinuousInput(-math.pi, math.pi)
-
+        self.turningPIDController.enableContinuousInput(0, 2*math.pi)
 
     def update(self) -> None:
         """Updates the internal module state from sensors."""
