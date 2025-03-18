@@ -70,7 +70,7 @@ class SwerveModule:
         self.turningPIDController = wpimath.controller.ProfiledPIDController(
             0.2,
             0,
-            0,
+            0.01,
             wpimath.trajectory.TrapezoidProfile.Constraints(
                 kModuleMaxAngularVelocity,
                 kModuleMaxAngularAcceleration,
