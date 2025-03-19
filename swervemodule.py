@@ -12,7 +12,7 @@ import wpimath.geometry
 import wpimath.kinematics
 import wpimath.trajectory
 
-from phoenix5.sensors import CANCoder
+from phoenix5.sensors import CANCoder, AbsoluteSensorRange
 
 from rev import SparkMax
 
@@ -61,6 +61,9 @@ class SwerveModule:
         self.encoder = encoder
 
         self.turningEncoder = CANCoder(self.encoder)
+
+        self.turningEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180)
+
         # self.angleRadians = math.radians(self.turningEncoder.getAbsolutePosition())
 
         # Gains are for example purposes only - must be determined for your own robot!
@@ -68,9 +71,9 @@ class SwerveModule:
 
         # Gains are for example purposes only - must be determined for your own robot!
         self.turningPIDController = wpimath.controller.ProfiledPIDController(
-            0.2,
+            0.1,
             0,
-            0.01,
+            0,
             wpimath.trajectory.TrapezoidProfile.Constraints(
                 kModuleMaxAngularVelocity,
                 kModuleMaxAngularAcceleration,
@@ -83,7 +86,7 @@ class SwerveModule:
 
         # Limit the PID Controller's input range between -pi and pi and set the input
         # to be continuous.
-        self.turningPIDController.enableContinuousInput(0, 2*math.pi)
+        self.turningPIDController.enableContinuousInput(-math.pi,math.pi)
 
     def update(self) -> None:
         """Updates the internal module state from sensors."""

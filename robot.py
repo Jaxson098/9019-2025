@@ -11,12 +11,14 @@ import wpilib.drive
 import wpimath.filter
 import wpimath.controller
 import drivetrain
+# import arm
 
 
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self) -> None:
         """Robot initialization function"""
         self.controller = wpilib.Joystick(0)
+        # self.controller2 = wpilib.Joystick(1)
         self.swerve = drivetrain.Drivetrain()
 
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -63,3 +65,10 @@ class MyRobot(wpilib.TimedRobot):
         )
 
         self.swerve.drive(xSpeed, ySpeed, rot, fieldRelative, self.getPeriod())
+
+        # Controller2_leftY = -wpimath.applyDeadband(self.controller2.getRawAxis(1), 0.08)
+        # Controller2_rightY = -wpimath.applyDeadband(self.controller2.getRawAxis(5), 0.08)
+        # Controller2_LB = self.controller2.getRawButton(5)
+        # Controller2_RB = self.controller2.getRawButton(6)
+
+        # arm.useLift(Controller2_RB, Controller2_LB, Controller2_leftY, Controller2_rightY)
