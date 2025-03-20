@@ -28,8 +28,7 @@ class SwerveModule:
         self,
         driveMotorID: int,
         turningMotorID: int,
-        encoder: int,
-        inverted: bool
+        encoder: int
     ) -> None:
         """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
 
@@ -43,8 +42,6 @@ class SwerveModule:
 
         self.driveMotor = SparkMax(driveMotorID, SparkMax.MotorType.kBrushless)
         self.turningMotor = SparkMax(turningMotorID, SparkMax.MotorType.kBrushless)
-
-        self.driveMotor.setInverted(inverted)
 
         self.driveEncoder = self.driveMotor.getEncoder()
 
@@ -71,9 +68,9 @@ class SwerveModule:
 
         # Gains are for example purposes only - must be determined for your own robot!
         self.turningPIDController = wpimath.controller.ProfiledPIDController(
-            0.1,
+            0.15,
             0,
-            0,
+            0.002,
             wpimath.trajectory.TrapezoidProfile.Constraints(
                 kModuleMaxAngularVelocity,
                 kModuleMaxAngularAcceleration,
@@ -129,9 +126,18 @@ class SwerveModule:
         """
 
         encoderRotation = wpimath.geometry.Rotation2d(self.angleRadians)
+        delta_angle = desiredState.angle - encoderRotation.radians()
 
-        # Optimize the reference state to avoid spinning further than 90 degrees
-        desiredState.optimize(encoderRotation)
+        if abs(math.degrees(delta_angle)) > 1:
+            desiredState.optimize(encoderRotation)
+            # Calculate the turning motor output from the turning PID controller.
+            turnOutput = self.turningPIDController.calculate(
+                self.angleRadians, desiredState.angle.radians()
+            )
+        else:
+            turnOutput = self.turningPIDController.calculate(
+                self.angleRadians, self.angleRadians
+            )
 
         # Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
         # direction of travel that can occur when modules change directions. This results in smoother
@@ -144,11 +150,6 @@ class SwerveModule:
         )
 
         driveFeedforward = self.driveFeedforward.calculate(desiredState.speed)
-
-        # Calculate the turning motor output from the turning PID controller.
-        turnOutput = self.turningPIDController.calculate(
-            self.angleRadians, desiredState.angle.radians()
-        )
 
         turnFeedforward = self.turnFeedforward.calculate(
             self.turningPIDController.getSetpoint().velocity
